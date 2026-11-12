@@ -1,3 +1,4 @@
+# Сборка: библиотека analyzer_core, программа divisibility_analyzer и тесты analyzer_tests.
 cmake_minimum_required(VERSION 3.10)
 project(divisibility_analyzer CXX)
 

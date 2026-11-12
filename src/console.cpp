@@ -1,3 +1,4 @@
+// Реализация функций из console.h, включая настройку консоли Windows (UTF-8 и цвета).
 #include "console.h"
 
 #include <cerrno>

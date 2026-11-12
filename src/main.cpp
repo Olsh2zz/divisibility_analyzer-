@@ -1,3 +1,5 @@
+// Точка входа: главное меню и обработчики пунктов меню.
+// Вычислений здесь нет — они в divisibility и rules; здесь ввод, вывод и запись в историю.
 #include <exception>
 #include <iostream>
 #include <string>

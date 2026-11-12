@@ -1,3 +1,4 @@
+// Реализация класса History из history.h.
 #include "history.h"
 
 #include <ctime>

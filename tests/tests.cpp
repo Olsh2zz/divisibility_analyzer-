@@ -1,3 +1,5 @@
+// Тесты для divisibility, rules, console и history.
+// Сторонних библиотек нет: программа завершается с кодом 0, если все проверки прошли.
 #include <climits>
 #include <cstdio>
 #include <iostream>

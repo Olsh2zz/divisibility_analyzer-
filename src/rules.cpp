@@ -1,3 +1,4 @@
+// Реализация признаков делимости из rules.h.
 #include "rules.h"
 
 #include <cctype>

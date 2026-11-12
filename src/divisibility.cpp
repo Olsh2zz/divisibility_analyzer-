@@ -1,3 +1,4 @@
+// Реализация функций из divisibility.h.
 #include "divisibility.h"
 
 #include <algorithm>
