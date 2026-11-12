@@ -4,21 +4,46 @@
 
 ## Сборка и запуск
 
-Через CMake:
+### macOS
 
-```bash
-cmake -S . -B build
-cmake --build build
-./build/divisibility_analyzer
-```
+1. Откройте «Терминал» и поставьте компилятор, если его ещё нет:
 
-Без CMake, одной командой:
+   ```bash
+   xcode-select --install
+   ```
 
-```bash
-g++ -std=c++17 -O2 -Isrc src/*.cpp -o divisibility_analyzer
-```
+   Появится окно установки Command Line Tools. Если они уже стоят, команда об этом скажет.
 
-На Windows подойдут MinGW и Visual Studio. Кодировку UTF-8 и цвета в консоли программа включает сама при запуске.
+2. Скачайте проект и перейдите в его папку:
+
+   ```bash
+   git clone https://github.com/Olsh2zz/divisibility_analyzer-.git
+   cd divisibility_analyzer-
+   ```
+
+3. Соберите программу:
+
+   ```bash
+   clang++ -std=c++17 -O2 -Isrc src/*.cpp -o divisibility_analyzer
+   ```
+
+4. Запустите:
+
+   ```bash
+   ./divisibility_analyzer
+   ```
+
+### Visual Studio (Windows)
+
+Нужна Visual Studio 2019 или 2022 с компонентом «Разработка классических приложений на C++» (Desktop development with C++). Он ставится через Visual Studio Installer, средства CMake входят в него по умолчанию.
+
+1. Запустите Visual Studio и на стартовом экране выберите «Клонирование репозитория» (Clone a repository).
+2. В поле адреса вставьте `https://github.com/Olsh2zz/divisibility_analyzer-.git` и нажмите «Клонировать». Если проект уже скачан, вместо этого выберите «Открыть локальную папку» (Open a local folder) и укажите папку с файлом `CMakeLists.txt`.
+3. Подождите, пока Visual Studio настроит проект. В окне «Вывод» в конце появится строка «CMake generation finished».
+4. На панели инструментов, в списке рядом с зелёной стрелкой, выберите `divisibility_analyzer.exe`.
+5. Нажмите Ctrl+F5. Программа соберётся и откроется в отдельном окне консоли.
+
+Кодировку UTF-8 и цвета в консоли программа включает сама при запуске.
 
 ## Меню
 
@@ -88,7 +113,7 @@ g++ -std=c++17 -O2 -Isrc src/*.cpp -o divisibility_analyzer
 
 ## Ошибки ввода и крайние случаи
 
-Ввод читается строкой и разбирается вручную. Если введены буквы, пустая строка или слишком большое число, программа объясняет, что не так, и спрашивает ещё раз. При конце ввода (Ctrl+D, Ctrl+Z) она завершается без сбоя.
+Ввод читается строкой и разбирается вручную. Если введены буквы, пустая строка или слишком большое число, программа объясняет, что не так, и спрашивает ещё раз. При конце ввода (Ctrl+D на macOS, Ctrl+Z и Enter в Windows) она завершается без сбоя.
 
 | Ввод | Что отвечает программа |
 |---|---|
@@ -109,10 +134,14 @@ g++ -std=c++17 -O2 -Isrc src/*.cpp -o divisibility_analyzer
 
 ## Тесты
 
+На macOS:
+
 ```bash
-cmake --build build
-./build/analyzer_tests
+clang++ -std=c++17 -O2 -Isrc tests/tests.cpp src/divisibility.cpp src/rules.cpp src/history.cpp src/console.cpp -o analyzer_tests
+./analyzer_tests
 ```
+
+В Visual Studio выберите в том же списке `analyzer_tests.exe` и нажмите Ctrl+F5. В последней строке вывода должно быть «провалов: 0».
 
 Тесты написаны без фреймворков, в одном файле `tests/tests.cpp`. В них данные из задания (простые 2, 3, 17, 97; составные 4, 15, 100; 0, 1 и отрицательные; 123456 и 999999) и оба примера оттуда. Признаки делимости сверяются с обычным делением на всех числах от 0 до 30 000 и на нескольких числах длиной 30–50 знаков. Проверка простоты на числах до 5000 сверяется с перебором делителей.
 
