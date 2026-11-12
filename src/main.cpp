@@ -1,4 +1,3 @@
-// «Анализатор делимости»: меню и сценарии работы с пользователем.
 #include <exception>
 #include <iostream>
 #include <string>
@@ -13,14 +12,12 @@ namespace {
 
 using dv::i64;
 
-const std::size_t SCREEN_LIST_LIMIT = 100;  // сколько чисел последовательности показывать на экране
+const std::size_t SCREEN_LIST_LIMIT = 100;
 
 History history;
 
 enum class Tone { Neutral, Yes, No };
 
-// Печатает результат и кладёт его в историю.
-// shown — укороченный вариант для экрана (если пуст, показывается full).
 void report(const std::string& operation, const std::string& full, Tone tone = Tone::Neutral,
             const std::string& shown = "") {
     const std::string& text = shown.empty() ? full : shown;
@@ -32,7 +29,6 @@ void report(const std::string& operation, const std::string& full, Tone tone = T
     history.add(operation, full);
 }
 
-// Результат-последовательность: на экране — начало списка, в истории — список целиком.
 void reportSequence(const std::string& operation, const std::vector<i64>& values) {
     std::string total = " (всего: " + std::to_string(values.size()) + ")";
     if (values.empty()) {
@@ -57,14 +53,12 @@ std::string join(const std::vector<i64>& values, const std::string& separator) {
     return text;
 }
 
-// ---------- 1. Проверка делимости ----------
-
 void checkDivisibility() {
     i64 a = ui::readInt("Введите число: ");
     i64 b = ui::readInt("Введите делитель: ");
     std::string operation = "Проверка делимости: " + std::to_string(a) + " на " + std::to_string(b);
 
-    bool divisible = dv::isDivisible(a, b);  // при b == 0 бросит исключение
+    bool divisible = dv::isDivisible(a, b);
     std::string as = std::to_string(a), bs = std::to_string(b);
     std::string quotient = as + " ÷ " + bs + " = " + std::to_string(a / b);
     if (divisible) {
@@ -76,19 +70,15 @@ void checkDivisibility() {
     }
 }
 
-// ---------- 2. Делители ----------
-
 void findDivisors() {
     i64 n = ui::readInt("Введите число: ");
-    std::vector<i64> list = dv::divisors(n);  // для нуля бросит исключение
+    std::vector<i64> list = dv::divisors(n);
     std::string result = ui::formatList(list) + " (всего: " + std::to_string(list.size()) + ")";
     report("Делители числа " + std::to_string(n), result);
     if (n < 0) {
         std::cout << "Показаны положительные делители; те же числа со знаком минус тоже подходят.\n";
     }
 }
-
-// ---------- 3. Простота ----------
 
 void checkPrime() {
     i64 n = ui::readInt("Введите число: ");
@@ -112,8 +102,6 @@ void checkPrime() {
             break;
     }
 }
-
-// ---------- 4. Последовательности ----------
 
 void readRange(i64& lo, i64& hi) {
     lo = ui::readInt("Диапазон: от ");
@@ -150,8 +138,6 @@ void generateSequence() {
     }
 }
 
-// ---------- 5. НОД и НОК ----------
-
 void findGcdLcm() {
     std::vector<i64> numbers = ui::readIntList("Введите два или больше чисел через пробел: ", 2);
     std::string args = "(" + join(numbers, ", ") + ")";
@@ -166,16 +152,12 @@ void findGcdLcm() {
     history.add("НОД и НОК чисел " + join(numbers, ", "), result);
 }
 
-// ---------- 6. Разложение на множители ----------
-
 void factorizeNumber() {
     i64 n = ui::readInt("Введите число: ");
-    std::string result = dv::factorizationToString(n);  // для нуля бросит исключение
+    std::string result = dv::factorizationToString(n);
     if (dv::isPrime(n)) result += " (простое число, дальше не раскладывается)";
     report("Разложение на простые множители: " + std::to_string(n), result);
 }
-
-// ---------- 7. Признаки делимости ----------
 
 void checkRules() {
     std::string number = ui::readNumberString("Введите число (можно очень длинное): ");
@@ -184,7 +166,6 @@ void checkRules() {
     const std::string header = " " + ui::padRight("На", 4) + "| " + ui::padRight("Делится", 8) + "| Почему";
     const std::string line = "-----+---------+" + std::string(40, '-');
 
-    // Таблица собирается дважды: с цветом для экрана и без него для истории и файла.
     std::string plain = header + "\n" + line + "\n";
     std::cout << "\n" << ui::bold(header) << "\n" << line << "\n";
     for (const dv::RuleResult& r : results) {
@@ -204,8 +185,6 @@ void checkRules() {
     std::cout << summary << "\n";
     history.add("Признаки делимости числа " + number, plain + summary);
 }
-
-// ---------- 8. Быстрые шаблоны ----------
 
 std::vector<i64> oddNumbers(i64 lo, i64 hi) {
     std::vector<i64> result;
@@ -234,8 +213,6 @@ void quickTemplates() {
     }
 }
 
-// ---------- 9–10. История и экспорт ----------
-
 void showHistory() {
     if (history.empty()) {
         std::cout << "История пуста: ещё не выполнено ни одной операции.\n";
@@ -245,7 +222,6 @@ void showHistory() {
     for (std::size_t i = 0; i < history.entries().size(); ++i) {
         const HistoryEntry& e = history.entries()[i];
         std::cout << ui::bold(std::to_string(i + 1) + ". [" + e.time + "] " + e.operation) << "\n";
-        // Длинные списки на экране обрезаются, целиком они есть в файле экспорта.
         const std::size_t limit = 2000;
         if (e.result.size() > limit) {
             std::cout << "   (длинный результат, " << e.result.size() << " байт — целиком будет в файле экспорта)\n";
@@ -281,8 +257,6 @@ void exportHistory() {
         std::cout << ui::red("Ошибка: не удалось записать файл «" + path + "»") << "\n";
     }
 }
-
-// ---------- Меню ----------
 
 void printMenu() {
     std::cout << "\n"
@@ -328,7 +302,6 @@ int main() {
             try {
                 run(choice);
             } catch (const std::exception& e) {
-                // Сюда попадают деление на ноль, слишком длинные диапазоны и т.п.
                 std::cout << ui::red(std::string("Ошибка: ") + e.what()) << "\n";
             }
         }

@@ -21,7 +21,7 @@ long long digitSum(const std::string& digits) {
     return sum;
 }
 
-// Знакопеременная сумма: цифры берутся справа налево со знаками +, -, +, ...
+// Цифры справа налево со знаками +, -, +, ...
 long long alternatingSum(const std::string& digits) {
     long long sum = 0;
     int sign = 1;
@@ -32,7 +32,6 @@ long long alternatingSum(const std::string& digits) {
     return sum;
 }
 
-// Число, составленное из последних count цифр (или из всех, если их меньше).
 int tail(const std::string& digits, std::size_t count) {
     std::size_t from = digits.size() > count ? digits.size() - count : 0;
     return std::stoi(digits.substr(from));

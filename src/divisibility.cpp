@@ -11,17 +11,16 @@ namespace {
 
 using u64 = unsigned long long;
 
-// Модуль числа без переполнения на LLONG_MIN.
 u64 uabs(i64 x) {
     return x < 0 ? 0ULL - static_cast<u64>(x) : static_cast<u64>(x);
 }
 
-// (a * b) mod m без переполнения. Требуется m < 2^63.
+// Требуется m < 2^63.
 u64 mulmod(u64 a, u64 b, u64 m) {
 #ifdef __SIZEOF_INT128__
     return static_cast<u64>(static_cast<unsigned __int128>(a) * b % m);
 #else
-    // Запасной вариант для компиляторов без 128-битных чисел: умножение сложениями.
+    // MSVC: нет __int128, умножаем сложениями.
     u64 result = 0;
     a %= m;
     b %= m;
@@ -49,8 +48,7 @@ u64 powmod(u64 base, u64 exp, u64 m) {
     return result;
 }
 
-// Тест Миллера — Рабина. С этим набором оснований он точен для всех 64-битных чисел,
-// поэтому большие числа проверяются мгновенно, без перебора до корня.
+// Миллер — Рабин; с этими основаниями детерминирован для всех 64-битных чисел.
 bool isPrimeU(u64 n) {
     if (n < 2) return false;
     static const u64 bases[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
@@ -104,7 +102,7 @@ i64 isqrt(i64 n) {
 
 bool isDivisible(i64 a, i64 b) {
     if (b == 0) throw std::invalid_argument("на ноль делить нельзя");
-    if (b == -1) return true;  // иначе LLONG_MIN % -1 — неопределённое поведение
+    if (b == -1) return true;  // LLONG_MIN % -1 — UB
     return a % b == 0;
 }
 
@@ -124,7 +122,6 @@ std::vector<std::pair<i64, int>> factorize(i64 n) {
     u64 m = uabs(n);
     std::vector<std::pair<i64, int>> factors;
 
-    // Делит m на p, пока делится; возвращает true, если множитель нашёлся.
     auto strip = [&](u64 p) {
         int power = 0;
         while (m % p == 0) {
@@ -137,8 +134,7 @@ std::vector<std::pair<i64, int>> factorize(i64 n) {
 
     strip(2);
     strip(3);
-    // Все простые больше 3 имеют вид 6k ± 1. Как только остаток сам оказался простым,
-    // перебор можно прекращать — это спасает на больших числах.
+    // Простые больше 3 имеют вид 6k ± 1. Если остаток уже простой, дальше перебирать незачем.
     if (!(m > 1 && isPrimeU(m))) {
         for (u64 p = 5; m > 1 && p <= m / p; p += 6) {
             bool found = strip(p);
@@ -171,7 +167,6 @@ std::string factorizationToString(i64 n) {
 std::vector<i64> divisors(i64 n) {
     if (n == 0) throw std::invalid_argument("у нуля бесконечно много делителей: он делится на любое число");
 
-    // Делители строятся из разложения: каждый — произведение простых в степенях от 0 до max.
     std::vector<i64> result{1};
     for (const auto& [prime, power] : factorize(n)) {
         std::size_t count = result.size();
@@ -217,9 +212,8 @@ std::vector<i64> multiplesInRange(i64 lo, i64 hi, i64 k) {
     if (lo > hi) std::swap(lo, hi);
     if (k < 0) k = -k;
 
-    // Первое кратное, не меньшее lo.
     i64 r = lo % k;
-    i64 first = lo - r;  // при r <= 0 это уже кратное >= lo
+    i64 first = lo - r;
     if (r > 0) {
         if (first > LLONG_MAX - k) return {};
         first += k;
@@ -237,7 +231,7 @@ std::vector<i64> multiplesInRange(i64 lo, i64 hi, i64 k) {
     result.reserve(static_cast<std::size_t>(count));
     for (i64 x = first;; x += k) {
         result.push_back(x);
-        if (x > hi - k) break;  // следующий шаг вышел бы за hi (и, возможно, за LLONG_MAX)
+        if (x > hi - k) break;  // x + k может переполниться
     }
     return result;
 }
@@ -249,12 +243,11 @@ std::vector<i64> divisibleByAll(i64 lo, i64 hi, const std::vector<i64>& ks) {
     }
     if (lo > hi) std::swap(lo, hi);
 
-    // Число делится на все ks тогда и только тогда, когда делится на их НОК.
     i64 common;
     try {
         common = lcm(ks);
     } catch (const std::overflow_error&) {
-        // НОК больше любого 64-битного числа — в диапазоне подходит разве что ноль.
+        // НОК не помещается в 64 бита: подходит только ноль.
         if (lo <= 0 && hi >= 0) return {0};
         return {};
     }
@@ -272,9 +265,8 @@ std::vector<i64> primesInRange(i64 lo, i64 hi) {
 
     std::vector<i64> result;
 
-    // Для очень больших границ решето потребовало бы слишком много «базовых» простых,
-    // поэтому там каждое число проверяется отдельно.
-    const i64 sieveLimit = 1000000000000LL;  // 10^12
+    // Выше этой границы решету нужно слишком много базовых простых, проверяем числа по одному.
+    const i64 sieveLimit = 1000000000000LL;
     if (hi > sieveLimit) {
         for (i64 x = lo;; ++x) {
             if (isPrime(x)) result.push_back(x);
@@ -283,8 +275,7 @@ std::vector<i64> primesInRange(i64 lo, i64 hi) {
         return result;
     }
 
-    // Сегментированное решето Эратосфена: сначала простые до sqrt(hi),
-    // затем ими вычёркиваются составные на отрезке [lo, hi].
+    // Сегментированное решето: простыми до sqrt(hi) вычёркиваем составные на [lo, hi].
     i64 root = isqrt(hi);
     std::vector<char> smallComposite(static_cast<std::size_t>(root) + 1, 0);
     std::vector<char> composite(static_cast<std::size_t>(hi - lo) + 1, 0);

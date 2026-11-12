@@ -56,7 +56,7 @@ void setupConsole() {
     if (terminal) {
         HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
         DWORD mode = 0;
-        // Старые консоли Windows не понимают ANSI-коды, пока их не включить.
+        // Без этого режима консоль Windows печатает ANSI-коды как текст.
         terminal = GetConsoleMode(out, &mode) &&
                    SetConsoleMode(out, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
     }
@@ -83,7 +83,7 @@ bool parseInt(const std::string& text, long long& value) {
     errno = 0;
     char* end = nullptr;
     long long parsed = std::strtoll(text.c_str(), &end, 10);
-    // LLONG_MIN отбрасывается намеренно: у него нет положительного «двойника».
+    // LLONG_MIN не принимаем: его модуль не помещается в long long.
     if (errno == ERANGE || *end != '\0' || parsed == LLONG_MIN) return false;
     value = parsed;
     return true;

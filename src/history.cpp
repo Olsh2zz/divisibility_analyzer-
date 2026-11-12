@@ -28,7 +28,6 @@ std::string History::toText() const {
     for (std::size_t i = 0; i < entries_.size(); ++i) {
         const HistoryEntry& e = entries_[i];
         out << (i + 1) << ". [" << e.time << "] " << e.operation << "\n";
-        // Результат печатается с отступом, построчно.
         std::istringstream lines(e.result);
         std::string line;
         while (std::getline(lines, line)) out << "   " << line << "\n";

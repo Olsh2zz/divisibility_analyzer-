@@ -1,5 +1,3 @@
-// Самопроверка ядра без сторонних библиотек.
-// Запуск: собрать и выполнить; код возврата 0 — всё в порядке.
 #include <climits>
 #include <cstdio>
 #include <iostream>
@@ -45,7 +43,7 @@ using dv::i64;
 using List = std::vector<i64>;
 
 void testDivisibility() {
-    CHECK(dv::isDivisible(42, 7));  // пример 1 из ТЗ
+    CHECK(dv::isDivisible(42, 7));
     CHECK(!dv::isDivisible(43, 7));
     CHECK(dv::isDivisible(0, 5));
     CHECK(dv::isDivisible(-42, 7));
@@ -66,7 +64,6 @@ void testPrimes() {
     CHECK(!dv::isPrime(3215031751LL));            // сильное псевдопростое по основаниям 2, 3, 5, 7
     CHECK(!dv::isPrime(1000000007LL * 998244353LL));
 
-    // Сверка теста Миллера — Рабина с перебором делителей.
     for (i64 n = 0; n < 5000; ++n) {
         bool naive = n >= 2;
         for (i64 d = 2; d * d <= n; ++d) {
@@ -93,7 +90,6 @@ void testFactorize() {
     CHECK(dv::factorizationToString(1) == "1 = 1");
     CHECK(dv::factorizationToString(97) == "97 = 97");
 
-    // Произведение множителей должно давать исходное число.
     for (i64 n = 1; n < 3000; ++n) {
         i64 product = 1;
         for (const auto& [p, e] : dv::factorize(n)) {
@@ -140,9 +136,9 @@ void testGcdLcm() {
 }
 
 void testSequences() {
-    CHECK(dv::divisibleByAll(1, 50, {3, 5}) == (List{15, 30, 45}));  // пример 2 из ТЗ
+    CHECK(dv::divisibleByAll(1, 50, {3, 5}) == (List{15, 30, 45}));
     CHECK(dv::multiplesInRange(1, 20, 5) == (List{5, 10, 15, 20}));
-    CHECK(dv::multiplesInRange(20, 1, 5) == (List{5, 10, 15, 20}));   // границы в обратном порядке
+    CHECK(dv::multiplesInRange(20, 1, 5) == (List{5, 10, 15, 20}));
     CHECK(dv::multiplesInRange(-10, 10, 5) == (List{-10, -5, 0, 5, 10}));
     CHECK(dv::multiplesInRange(-9, -1, 4) == (List{-8, -4}));
     CHECK(dv::multiplesInRange(1, 10, -3) == (List{3, 6, 9}));
@@ -161,7 +157,6 @@ void testSequences() {
     CHECK(dv::primesInRange(1, 1000000).size() == 78498);
     CHECK(dv::primesInRange(1000000000000LL, 1000000000100LL) ==
           (List{1000000000039LL, 1000000000061LL, 1000000000063LL, 1000000000091LL}));
-    // Выше 10^12 работает ветка без решета.
     CHECK(dv::primesInRange(9223372036854775700LL, LLONG_MAX) == (List{9223372036854775783LL}));
     CHECK_THROWS(dv::primesInRange(1, 100000000), std::length_error);
 
@@ -169,7 +164,6 @@ void testSequences() {
 }
 
 void testRules() {
-    // Каждый признак должен совпадать с обычным делением.
     for (int n = 0; n <= 30000; ++n) {
         std::string text = std::to_string(n);
         for (const dv::RuleResult& r : dv::checkAllRules(text)) {
@@ -177,7 +171,6 @@ void testRules() {
         }
     }
 
-    // Числа, которые не помещаются ни в один встроенный тип.
     const std::vector<std::string> big = {
         "123456789012345678901234567890",
         "999999999999999999999999999999999999",
