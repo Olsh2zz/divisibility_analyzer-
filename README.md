@@ -17,8 +17,8 @@
 2. Скачайте проект и перейдите в его папку:
 
    ```bash
-   git clone https://github.com/Olsh2zz/divisibility_analyzer-.git
-   cd divisibility_analyzer-
+   git clone https://gitverse.ru/olsh2zz/divisibility_analyzer.git
+   cd divisibility_analyzer
    ```
 
 3. Соберите программу:
@@ -38,7 +38,7 @@
 Нужна Visual Studio 2019 или 2022 с компонентом «Разработка классических приложений на C++» (Desktop development with C++). Он ставится через Visual Studio Installer, средства CMake входят в него по умолчанию.
 
 1. Запустите Visual Studio и на стартовом экране выберите «Клонирование репозитория» (Clone a repository).
-2. В поле адреса вставьте `https://github.com/Olsh2zz/divisibility_analyzer-.git` и нажмите «Клонировать». Если проект уже скачан, вместо этого выберите «Открыть локальную папку» (Open a local folder) и укажите папку с файлом `CMakeLists.txt`.
+2. В поле адреса вставьте `https://gitverse.ru/olsh2zz/divisibility_analyzer.git` и нажмите «Клонировать». Если проект уже скачан, вместо этого выберите «Открыть локальную папку» (Open a local folder) и укажите папку с файлом `CMakeLists.txt`.
 3. Подождите, пока Visual Studio настроит проект. В окне «Вывод» в конце появится строка «CMake generation finished».
 4. На панели инструментов, в списке рядом с зелёной стрелкой, выберите `divisibility_analyzer.exe`.
 5. Нажмите Ctrl+F5. Программа соберётся и откроется в отдельном окне консоли.
