@@ -1,0 +1,6 @@
+build/
+*.o
+*.exe
+/divisibility_analyzer
+/analyzer_tests
+results.txt
